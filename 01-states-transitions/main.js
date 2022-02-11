@@ -3,14 +3,34 @@ import '../style.css';
 import { createMachine, assign, interpret, send } from 'xstate';
 import elements from '../utils/elements';
 
+/*
 import { inspect } from '@xstate/inspect';
+inspect({
+  iframe: false,
+  url: 'https://stately.ai/viz?inspect',
+});
+*/
 
-// inspect({
-//   iframe: false,
-//   url: 'https://stately.ai/viz?inspect',
-// });
-
-const playerMachine = createMachine({});
+const playerMachine = createMachine({
+  initial: 'loading',
+  states: {
+    loading: {
+      on: {
+        LOADED: 'playing'
+      }
+    },
+    playing: {
+      on: {
+        PAUSE: 'paused'
+      }
+    },
+    paused: {
+      on: {
+        PLAY: 'playing'
+      }
+    }
+  }
+})
 
 const service = interpret(playerMachine, { devTools: true }).start();
 
@@ -29,3 +49,5 @@ service.subscribe((state) => {
 });
 
 service.send({ type: 'LOADED' });
+
+window.service = service
